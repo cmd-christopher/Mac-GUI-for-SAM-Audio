@@ -1,0 +1,30 @@
+# Python virtual environment
+venv/
+.venv/
+ENV/
+
+# Python bytecode
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+
+# Uploaded and processed audio files
+uploads/
+output/
+
+# Model cache (downloaded automatically)
+.cache/
+
+# IDE settings
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# macOS
+.DS_Store
+
+# Environment variables
+.env
+.env.local

@@ -1,0 +1,14 @@
+# SAM-Audio Isolation Utility Dependencies
+# For Apple Silicon (M1/M2/M3) Macs
+
+# MLX Audio processing library with SAM-Audio support
+mlx-audio>=0.2.10
+
+# Web framework
+flask>=3.0.0
+
+# Environment variable management
+python-dotenv>=1.0.0
+
+# Audio file handling
+pydub>=0.25.1
