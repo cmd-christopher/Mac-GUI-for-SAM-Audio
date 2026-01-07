@@ -22,6 +22,39 @@ A local audio isolation utility powered by Meta's SAM-Audio model, optimized for
 - **macOS**: 14.0 or later
 - **Python**: 3.10 or later
 
+## Installing Python 3.10+
+
+This application requires **Python 3.10 or later**. macOS comes with an older Python version that won't work. Choose one of these methods to install a compatible Python:
+
+### Option 1: Homebrew (Recommended)
+
+```bash
+# Install Homebrew if you don't have it
+/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+
+# Install Python 3.12
+brew install python@3.12
+```
+
+### Option 2: pyenv (Version Manager)
+
+```bash
+brew install pyenv
+pyenv install 3.12
+cd Mac-GUI-for-SAM-Audio
+pyenv local 3.12  # Uses the .python-version file
+```
+
+### Option 3: mise (Modern Version Manager)
+
+```bash
+brew install mise
+mise install python@3.12
+mise use python@3.12
+```
+
+> **Note**: The `run.sh` script will automatically detect Python 3.10+ from Homebrew, pyenv, or mise. You don't need to manually activate anything—just install it and run the script.
+
 ## Quick Start
 
 ```bash
@@ -81,6 +114,9 @@ Mac-GUI-for-SAM-Audio/
 
 ## Troubleshooting
 
+### "Python 3.10+ is required" error
+Your system's default Python is too old. Install Python 3.10+ using one of the methods in the [Installing Python 3.10+](#installing-python-310) section above.
+
 ### Port 5001 in use
 Edit `app.py` and change the port number on the last line.
 
@@ -89,6 +125,9 @@ Ensure you have a stable internet connection. The model (~4.8GB) is downloaded f
 
 ### Out of memory
 Enable "Long audio mode" checkbox for files over 30 seconds - this uses chunked processing.
+
+### "resolution-too-deep" pip error
+This usually means you're using Python 3.9 or older. Install Python 3.10+ as described above.
 
 ## Credits
 

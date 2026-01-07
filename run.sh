@@ -25,16 +25,47 @@ cd "$SCRIPT_DIR"
 VENV_DIR="venv"
 REQUIREMENTS_FILE="requirements.txt"
 
-# Check if Python 3 is available
-if ! command -v python3 &> /dev/null; then
-    echo -e "${RED}Error: Python 3 is required but not installed.${NC}"
-    echo "Please install Python 3.10+ using Homebrew: brew install python@3.10"
+# Prefer Python 3.12, fall back to python3
+if command -v /opt/homebrew/bin/python3.12 &> /dev/null; then
+    PYTHON="/opt/homebrew/bin/python3.12"
+elif command -v python3.12 &> /dev/null; then
+    PYTHON="python3.12"
+elif command -v python3.11 &> /dev/null; then
+    PYTHON="python3.11"
+elif command -v python3.10 &> /dev/null; then
+    PYTHON="python3.10"
+else
+    echo ""
+    echo -e "${RED}╔════════════════════════════════════════════════════════════╗${NC}"
+    echo -e "${RED}║  ERROR: Python 3.10 or later is required but not found     ║${NC}"
+    echo -e "${RED}╚════════════════════════════════════════════════════════════╝${NC}"
+    echo ""
+    echo -e "${YELLOW}This application requires Python 3.10+ because mlx-audio${NC}"
+    echo -e "${YELLOW}and other dependencies do not support older Python versions.${NC}"
+    echo ""
+    echo -e "${GREEN}To install Python 3.12, choose one of these options:${NC}"
+    echo ""
+    echo -e "  ${BLUE}Option 1: Homebrew (recommended)${NC}"
+    echo "    brew install python@3.12"
+    echo ""
+    echo -e "  ${BLUE}Option 2: pyenv${NC}"
+    echo "    brew install pyenv"
+    echo "    pyenv install 3.12"
+    echo "    pyenv local 3.12"
+    echo ""
+    echo -e "  ${BLUE}Option 3: mise (formerly rtx)${NC}"
+    echo "    brew install mise"
+    echo "    mise install python@3.12"
+    echo "    mise use python@3.12"
+    echo ""
+    echo -e "After installing, run ${GREEN}./run.sh${NC} again."
+    echo ""
     exit 1
 fi
 
 # Check Python version
-PYTHON_VERSION=$(python3 -c 'import sys; print(f"{sys.version_info.major}.{sys.version_info.minor}")')
-echo -e "${YELLOW}→${NC} Detected Python version: ${GREEN}$PYTHON_VERSION${NC}"
+PYTHON_VERSION=$($PYTHON -c 'import sys; print(f"{sys.version_info.major}.{sys.version_info.minor}")')
+echo -e "${YELLOW}→${NC} Using Python: ${GREEN}$PYTHON${NC} (version ${GREEN}$PYTHON_VERSION${NC})"
 
 # Check if we're on Apple Silicon
 if [[ $(uname -m) == "arm64" ]]; then
@@ -47,8 +78,8 @@ fi
 # Create virtual environment if it doesn't exist
 if [ ! -d "$VENV_DIR" ]; then
     echo ""
-    echo -e "${YELLOW}→${NC} Creating virtual environment..."
-    python3 -m venv "$VENV_DIR"
+    echo -e "${YELLOW}→${NC} Creating virtual environment with $PYTHON..."
+    $PYTHON -m venv "$VENV_DIR"
     echo -e "${GREEN}✓${NC} Virtual environment created"
 fi
 
