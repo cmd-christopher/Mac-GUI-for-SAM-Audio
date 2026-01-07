@@ -11,6 +11,10 @@ A local audio isolation utility powered by Meta's SAM-Audio model, optimized for
 - 🍎 **Apple Silicon optimized** - Uses MLX for fast inference on M1/M2/M3 Macs
 - 📦 **Easy setup** - Single script handles everything
 
+## Screenshot
+
+![SAM-Audio Isolator Interface](screenshot.png)
+
 ## Requirements
 
 - **Hardware**: Apple Silicon Mac (M1, M2, or M3)
