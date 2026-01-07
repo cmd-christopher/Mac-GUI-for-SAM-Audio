@@ -24,6 +24,11 @@ const elements = {
     fileSize: document.getElementById('file-size'),
     removeFile: document.getElementById('remove-file'),
 
+    // Original Audio Preview
+    originalAudioPreview: document.getElementById('original-audio-preview'),
+    originalWaveform: document.getElementById('original-waveform'),
+    originalAudio: document.getElementById('original-audio'),
+
     // Description
     descriptionInput: document.getElementById('description-input'),
     suggestions: document.getElementById('suggestions'),
@@ -215,6 +220,75 @@ function drawWaveform(containerId, color) {
 }
 
 /**
+ * Update waveform to show playhead position
+ * @param {string} containerId - ID of the waveform container
+ * @param {number} progress - Playback progress from 0 to 1
+ * @param {string} playedColor - Color for played portion
+ * @param {string} unplayedColor - Color for unplayed portion
+ */
+function updateWaveformPlayhead(containerId, progress, playedColor, unplayedColor) {
+    const container = document.getElementById(containerId);
+    if (!container) return;
+
+    const bars = container.querySelectorAll('.waveform-bar');
+    if (bars.length === 0) return;
+
+    const playedBars = Math.floor(progress * bars.length);
+
+    bars.forEach((bar, index) => {
+        if (index < playedBars) {
+            bar.style.background = playedColor;
+            bar.style.opacity = '1';
+        } else if (index === playedBars) {
+            // Current bar - make it brighter
+            bar.style.background = playedColor;
+            bar.style.opacity = '1';
+            bar.style.boxShadow = '0 0 4px ' + playedColor;
+        } else {
+            bar.style.background = unplayedColor;
+            bar.style.opacity = '0.5';
+            bar.style.boxShadow = 'none';
+        }
+    });
+}
+
+/**
+ * Set up playhead tracking for an audio element and waveform
+ * @param {HTMLAudioElement} audioElement - The audio player element
+ * @param {string} containerId - ID of the waveform container
+ * @param {string} playedColor - Color for played portion (brighter)
+ * @param {string} unplayedColor - Color for unplayed portion (dimmer)
+ */
+function setupWaveformPlayhead(audioElement, containerId, playedColor, unplayedColor) {
+    if (!audioElement) return;
+
+    // Update on time change
+    audioElement.addEventListener('timeupdate', () => {
+        const progress = audioElement.duration ? audioElement.currentTime / audioElement.duration : 0;
+        updateWaveformPlayhead(containerId, progress, playedColor, unplayedColor);
+    });
+
+    // Reset on ended
+    audioElement.addEventListener('ended', () => {
+        updateWaveformPlayhead(containerId, 0, playedColor, unplayedColor);
+    });
+
+    // Allow clicking on waveform to seek
+    const container = document.getElementById(containerId);
+    if (container) {
+        container.style.cursor = 'pointer';
+        container.addEventListener('click', (e) => {
+            const rect = container.getBoundingClientRect();
+            const clickX = e.clientX - rect.left;
+            const progress = clickX / rect.width;
+            if (audioElement.duration) {
+                audioElement.currentTime = progress * audioElement.duration;
+            }
+        });
+    }
+}
+
+/**
  * Draw a real waveform by analyzing the audio data
  * @param {string} containerId - ID of the container element
  * @param {string} audioUrl - URL of the audio file to analyze
@@ -267,18 +341,17 @@ async function drawRealWaveform(containerId, audioUrl, color) {
 
         for (let i = 0; i < barCount; i++) {
             const bar = document.createElement('div');
+            bar.className = 'waveform-bar';
             // Minimum height of 5%, max of 95%
             const height = 5 + (normalizedAmplitudes[i] * 90);
             bar.style.cssText = `
                 flex: 1;
                 height: ${height}%;
                 background: ${color};
-                opacity: 0.7;
+                opacity: 0.5;
                 border-radius: 1px;
-                transition: opacity 0.2s ease;
+                transition: background 0.1s ease, opacity 0.1s ease;
             `;
-            bar.addEventListener('mouseenter', () => bar.style.opacity = '1');
-            bar.addEventListener('mouseleave', () => bar.style.opacity = '0.7');
             container.appendChild(bar);
         }
 
@@ -294,6 +367,97 @@ async function drawRealWaveform(containerId, audioUrl, color) {
 
         for (let i = 0; i < 60; i++) {
             const bar = document.createElement('div');
+            bar.className = 'waveform-bar';
+            bar.style.cssText = `
+                flex: 1;
+                height: ${20 + Math.random() * 60}%;
+                background: ${color};
+                opacity: 0.5;
+            `;
+            container.appendChild(bar);
+        }
+    }
+}
+
+/**
+ * Draw a real waveform by analyzing a local File object
+ * @param {File} file - The audio file to analyze
+ * @param {string} containerId - ID of the container element
+ * @param {string} color - Color for the waveform bars
+ */
+async function drawRealWaveformFromFile(file, containerId, color) {
+    const container = document.getElementById(containerId);
+    if (!container) return;
+
+    try {
+        // Read file as ArrayBuffer
+        const arrayBuffer = await file.arrayBuffer();
+
+        // Decode the audio data
+        const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+        const audioBuffer = await audioContext.decodeAudioData(arrayBuffer);
+
+        // Get the raw audio data (use first channel)
+        const rawData = audioBuffer.getChannelData(0);
+
+        // Number of bars to display
+        const barCount = 80;
+        const samplesPerBar = Math.floor(rawData.length / barCount);
+
+        // Calculate amplitude for each bar
+        const amplitudes = [];
+        for (let i = 0; i < barCount; i++) {
+            let sum = 0;
+            const start = i * samplesPerBar;
+            const end = start + samplesPerBar;
+
+            // Calculate RMS (root mean square) for this segment
+            for (let j = start; j < end && j < rawData.length; j++) {
+                sum += rawData[j] * rawData[j];
+            }
+            const rms = Math.sqrt(sum / samplesPerBar);
+            amplitudes.push(rms);
+        }
+
+        // Normalize amplitudes to 0-1 range
+        const maxAmplitude = Math.max(...amplitudes, 0.01);
+        const normalizedAmplitudes = amplitudes.map(a => a / maxAmplitude);
+
+        // Clear container and draw bars
+        container.innerHTML = '';
+        container.style.display = 'flex';
+        container.style.alignItems = 'flex-end';
+        container.style.gap = '1px';
+
+        for (let i = 0; i < barCount; i++) {
+            const bar = document.createElement('div');
+            bar.className = 'waveform-bar';
+            // Minimum height of 5%, max of 95%
+            const height = 5 + (normalizedAmplitudes[i] * 90);
+            bar.style.cssText = `
+                flex: 1;
+                height: ${height}%;
+                background: ${color};
+                opacity: 0.5;
+                border-radius: 1px;
+                transition: background 0.1s ease, opacity 0.1s ease;
+            `;
+            container.appendChild(bar);
+        }
+
+        // Close the audio context to free resources
+        audioContext.close();
+
+    } catch (error) {
+        console.error('Error drawing waveform from file:', error);
+        // Fallback to simple bars if analysis fails
+        container.innerHTML = '';
+        container.style.display = 'flex';
+        container.style.alignItems = 'flex-end';
+
+        for (let i = 0; i < 60; i++) {
+            const bar = document.createElement('div');
+            bar.className = 'waveform-bar';
             bar.style.cssText = `
                 flex: 1;
                 height: ${20 + Math.random() * 60}%;
@@ -311,6 +475,11 @@ function resetUI() {
     elements.fileInput.value = '';
     elements.fileInfo.classList.add('hidden');
     elements.uploadZone.classList.remove('hidden');
+
+    // Hide and clear original audio preview
+    elements.originalAudioPreview.classList.add('hidden');
+    elements.originalAudio.src = '';
+    elements.originalWaveform.innerHTML = '';
 
     // Clear description
     elements.descriptionInput.value = '';
@@ -388,6 +557,17 @@ function handleFileSelect(file) {
     elements.uploadZone.classList.add('hidden');
     elements.fileInfo.classList.remove('hidden');
 
+    // Show original audio preview
+    elements.originalAudioPreview.classList.remove('hidden');
+
+    // Create object URL for the file and set as audio source
+    const audioUrl = URL.createObjectURL(file);
+    elements.originalAudio.src = audioUrl;
+
+    // Draw waveform for original audio
+    drawWaveform('original-waveform', '#3b82f6');
+    drawRealWaveformFromFile(file, 'original-waveform', '#3b82f6');
+
     updateProcessButton();
 }
 
@@ -397,6 +577,12 @@ elements.removeFile.addEventListener('click', () => {
     elements.fileInput.value = '';
     elements.fileInfo.classList.add('hidden');
     elements.uploadZone.classList.remove('hidden');
+
+    // Hide and clear original audio preview
+    elements.originalAudioPreview.classList.add('hidden');
+    elements.originalAudio.src = '';
+    elements.originalWaveform.innerHTML = '';
+
     updateProcessButton();
 });
 
@@ -437,4 +623,14 @@ document.addEventListener('keydown', (e) => {
 document.addEventListener('DOMContentLoaded', () => {
     checkModelStatus();
     updateProcessButton();
+
+    // Set up playhead tracking for all audio players
+    // Original audio - blue colors
+    setupWaveformPlayhead(elements.originalAudio, 'original-waveform', '#3b82f6', '#1e3a5f');
+
+    // Target audio - green colors  
+    setupWaveformPlayhead(elements.targetAudio, 'target-waveform', '#10b981', '#064e3b');
+
+    // Residual audio - orange/amber colors
+    setupWaveformPlayhead(elements.residualAudio, 'residual-waveform', '#f59e0b', '#78350f');
 });
