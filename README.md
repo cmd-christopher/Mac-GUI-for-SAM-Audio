@@ -8,7 +8,7 @@ A local audio isolation utility powered by Meta's SAM-Audio model, optimized for
 
 - 🎵 **Text-prompted audio isolation** - Describe what you want to extract (speech, vocals, drums, piano, etc.)
 - 🖥️ **Modern web interface** - Dark theme with drag-and-drop upload
-- 🍎 **Apple Silicon optimized** - Uses MLX for fast inference on M1/M2/M3 Macs
+- 🍎 **Apple Silicon optimized** - Uses MLX for fast inference on M Series Macs
 - 📦 **Easy setup** - Single script handles everything
 
 ## Screenshot
@@ -17,7 +17,7 @@ A local audio isolation utility powered by Meta's SAM-Audio model, optimized for
 
 ## Requirements
 
-- **Hardware**: Apple Silicon Mac (M1, M2, or M3)
+- **Hardware**: Apple Silicon Mac (M Series)
 - **RAM**: 16GB minimum (64GB recommended for best performance)
 - **macOS**: 14.0 or later
 - **Python**: 3.10 or later
@@ -98,4 +98,4 @@ Enable "Long audio mode" checkbox for files over 30 seconds - this uses chunked 
 
 ## License
 
-MIT License - See LICENSE file for details.
+MIT License - See [LICENSE](LICENSE) for details.
