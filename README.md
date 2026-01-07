@@ -22,8 +22,8 @@ A local audio isolation utility powered by Meta's SAM-Audio model, optimized for
 
 ```bash
 # Clone the repository
-git clone <your-repo-url>
-cd SAM-Audio
+git clone https://github.com/cmd-christopher/Mac-GUI-for-SAM-Audio.git
+cd Mac-GUI-for-SAM-Audio
 
 # Run the application (creates venv, installs deps, downloads model)
 ./run.sh
@@ -55,7 +55,7 @@ Then open **http://localhost:5001** in your browser.
 ## Project Structure
 
 ```
-SAM-Audio/
+Mac-GUI-for-SAM-Audio/
 ├── app.py                 # Flask web application
 ├── audio_processor.py     # SAM-Audio model wrapper
 ├── requirements.txt       # Python dependencies
