@@ -1,8 +1,14 @@
 # SAM-Audio Isolation Utility Dependencies
-# For Apple Silicon (M1/M2/M3) Macs
+# For Apple Silicon (M Series) Macs
 
 # MLX Audio processing library with SAM-Audio support
 mlx-audio>=0.2.10
+
+# Core dependencies with pinned versions to speed up resolution
+mlx>=0.25.2
+transformers>=4.49.0,<5.0.0
+huggingface_hub>=0.27.0
+typing_extensions>=4.12.0
 
 # Web framework
 flask>=3.0.0
