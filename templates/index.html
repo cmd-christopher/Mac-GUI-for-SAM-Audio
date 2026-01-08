@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -10,6 +11,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="/static/css/style.css">
 </head>
+
 <body>
     <div class="app-container">
         <!-- Header -->
@@ -17,9 +19,9 @@
             <div class="logo">
                 <div class="logo-icon">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <path d="M9 18V5l12-2v13"/>
-                        <circle cx="6" cy="18" r="3"/>
-                        <circle cx="18" cy="16" r="3"/>
+                        <path d="M9 18V5l12-2v13" />
+                        <circle cx="6" cy="18" r="3" />
+                        <circle cx="18" cy="16" r="3" />
                     </svg>
                 </div>
                 <div class="logo-text">
@@ -41,9 +43,9 @@
                     <div class="upload-content">
                         <div class="upload-icon">
                             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-                                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
-                                <polyline points="17,8 12,3 7,8"/>
-                                <line x1="12" y1="3" x2="12" y2="15"/>
+                                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+                                <polyline points="17,8 12,3 7,8" />
+                                <line x1="12" y1="3" x2="12" y2="15" />
                             </svg>
                         </div>
                         <h2>Drop your audio file here</h2>
@@ -52,14 +54,14 @@
                     </div>
                     <input type="file" id="file-input" accept=".mp3,.wav,.flac,.m4a,.ogg,.aac" hidden>
                 </div>
-                
+
                 <!-- File Info (shown after upload) -->
                 <div class="file-info hidden" id="file-info">
                     <div class="file-icon">
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <path d="M9 18V5l12-2v13"/>
-                            <circle cx="6" cy="18" r="3"/>
-                            <circle cx="18" cy="16" r="3"/>
+                            <path d="M9 18V5l12-2v13" />
+                            <circle cx="6" cy="18" r="3" />
+                            <circle cx="18" cy="16" r="3" />
                         </svg>
                     </div>
                     <div class="file-details">
@@ -68,8 +70,8 @@
                     </div>
                     <button class="remove-file" id="remove-file" title="Remove file">
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <line x1="18" y1="6" x2="6" y2="18"/>
-                            <line x1="6" y1="6" x2="18" y2="18"/>
+                            <line x1="18" y1="6" x2="6" y2="18" />
+                            <line x1="6" y1="6" x2="18" y2="18" />
                         </svg>
                     </button>
                 </div>
@@ -88,12 +90,8 @@
             <section class="description-section">
                 <label for="description-input">What sound do you want to isolate?</label>
                 <div class="input-wrapper">
-                    <input 
-                        type="text" 
-                        id="description-input" 
-                        placeholder="e.g., speech, piano, dog barking, drums..."
-                        autocomplete="off"
-                    >
+                    <input type="text" id="description-input" placeholder="e.g., speech, piano, dog barking, drums..."
+                        autocomplete="off">
                     <div class="input-suggestions" id="suggestions">
                         <button type="button" data-value="speech">speech</button>
                         <button type="button" data-value="music">music</button>
@@ -105,15 +103,7 @@
                 </div>
             </section>
 
-            <!-- Options -->
-            <section class="options-section">
-                <label class="checkbox-wrapper">
-                    <input type="checkbox" id="long-audio-checkbox">
-                    <span class="checkmark"></span>
-                    <span class="checkbox-label">Long audio mode</span>
-                    <span class="checkbox-hint">(use for files over 30 seconds)</span>
-                </label>
-            </section>
+            <!-- Options Section Removed (Auto-detected) -->
 
             <!-- Process Button -->
             <section class="action-section">
@@ -121,7 +111,7 @@
                     <span class="button-text">Isolate Audio</span>
                     <span class="button-icon">
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <polygon points="5,3 19,12 5,21"/>
+                            <polygon points="5,3 19,12 5,21" />
                         </svg>
                     </span>
                 </button>
@@ -140,12 +130,12 @@
             <section class="results-section hidden" id="results-section">
                 <h2 class="results-title">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
-                        <polyline points="22,4 12,14.01 9,11.01"/>
+                        <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" />
+                        <polyline points="22,4 12,14.01 9,11.01" />
                     </svg>
                     Separation Complete
                 </h2>
-                
+
                 <div class="audio-players">
                     <!-- Target Audio -->
                     <div class="audio-card target-card">
@@ -157,9 +147,9 @@
                         <audio controls id="target-audio" class="audio-player"></audio>
                         <a class="download-button" id="target-download" download>
                             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
-                                <polyline points="7,10 12,15 17,10"/>
-                                <line x1="12" y1="15" x2="12" y2="3"/>
+                                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+                                <polyline points="7,10 12,15 17,10" />
+                                <line x1="12" y1="15" x2="12" y2="3" />
                             </svg>
                             Download
                         </a>
@@ -175,9 +165,9 @@
                         <audio controls id="residual-audio" class="audio-player"></audio>
                         <a class="download-button" id="residual-download" download>
                             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
-                                <polyline points="7,10 12,15 17,10"/>
-                                <line x1="12" y1="15" x2="12" y2="3"/>
+                                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+                                <polyline points="7,10 12,15 17,10" />
+                                <line x1="12" y1="15" x2="12" y2="3" />
                             </svg>
                             Download
                         </a>
@@ -188,9 +178,9 @@
                 <div class="metadata" id="metadata">
                     <span class="metadata-item">
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <rect x="2" y="3" width="20" height="14" rx="2" ry="2"/>
-                            <line x1="8" y1="21" x2="16" y2="21"/>
-                            <line x1="12" y1="17" x2="12" y2="21"/>
+                            <rect x="2" y="3" width="20" height="14" rx="2" ry="2" />
+                            <line x1="8" y1="21" x2="16" y2="21" />
+                            <line x1="12" y1="17" x2="12" y2="21" />
                         </svg>
                         Peak Memory: <span id="peak-memory">0.00</span> GB
                     </span>
@@ -199,8 +189,8 @@
                 <!-- New Separation Button -->
                 <button class="new-separation-button" id="new-separation">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <polyline points="1,4 1,10 7,10"/>
-                        <path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"/>
+                        <polyline points="1,4 1,10 7,10" />
+                        <path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10" />
                     </svg>
                     Process Another File
                 </button>
@@ -210,9 +200,9 @@
             <section class="error-section hidden" id="error-section">
                 <div class="error-icon">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <circle cx="12" cy="12" r="10"/>
-                        <line x1="12" y1="8" x2="12" y2="12"/>
-                        <line x1="12" y1="16" x2="12.01" y2="16"/>
+                        <circle cx="12" cy="12" r="10" />
+                        <line x1="12" y1="8" x2="12" y2="12" />
+                        <line x1="12" y1="16" x2="12.01" y2="16" />
                     </svg>
                 </div>
                 <h3>Something went wrong</h3>
@@ -223,10 +213,12 @@
 
         <!-- Footer -->
         <footer class="footer">
-            <p>Powered by <a href="https://huggingface.co/mlx-community/sam-audio-small" target="_blank">SAM-Audio</a> & <a href="https://ml-explore.github.io/mlx/" target="_blank">MLX</a></p>
+            <p>Powered by <a href="https://huggingface.co/mlx-community/sam-audio-small" target="_blank">SAM-Audio</a> &
+                <a href="https://ml-explore.github.io/mlx/" target="_blank">MLX</a></p>
         </footer>
     </div>
 
     <script src="/static/js/app.js"></script>
 </body>
+
 </html>

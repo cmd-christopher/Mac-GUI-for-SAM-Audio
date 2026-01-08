@@ -34,7 +34,8 @@ const elements = {
     suggestions: document.getElementById('suggestions'),
 
     // Options
-    longAudioCheckbox: document.getElementById('long-audio-checkbox'),
+    // Options - Removed
+    // longAudioCheckbox: document.getElementById('long-audio-checkbox'),
 
     // Actions
     processButton: document.getElementById('process-button'),
@@ -145,7 +146,11 @@ async function separateAudio() {
     showSection(elements.processingSection);
 
     const description = elements.descriptionInput.value.trim();
-    const useLongAudio = elements.longAudioCheckbox.checked;
+    // Automatically detect long audio mode (files > 30 seconds)
+    const duration = elements.originalAudio.duration;
+    const useLongAudio = duration > 30;
+
+    console.log(`Audio duration: ${duration}s, Long mode: ${useLongAudio}`);
 
     // Update processing message
     elements.processingMessage.textContent = useLongAudio
@@ -484,8 +489,8 @@ function resetUI() {
     // Clear description
     elements.descriptionInput.value = '';
 
-    // Clear checkbox
-    elements.longAudioCheckbox.checked = false;
+    // Clear checkbox - Removed
+    // elements.longAudioCheckbox.checked = false;
 
     // Clear results
     elements.targetAudio.src = '';
