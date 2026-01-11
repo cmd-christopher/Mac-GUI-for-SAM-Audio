@@ -6,6 +6,7 @@ A web interface for isolating audio using Meta's SAM-Audio model.
 import os
 import uuid
 from pathlib import Path
+import socket
 from flask import Flask, render_template, request, jsonify, send_file
 from werkzeug.utils import secure_filename
 
@@ -15,6 +16,8 @@ from audio_processor import get_processor
 UPLOAD_FOLDER = Path("uploads")
 OUTPUT_FOLDER = Path("output")
 ALLOWED_EXTENSIONS = {"mp3", "wav", "flac", "m4a", "ogg", "aac"}
+DEFAULT_PORT = 5001
+PORT_ENV_VAR = "SAM_AUDIO_PORT"
 
 # Create directories
 UPLOAD_FOLDER.mkdir(parents=True, exist_ok=True)
@@ -32,6 +35,36 @@ processor = get_processor(str(OUTPUT_FOLDER))
 def allowed_file(filename: str) -> bool:
     """Check if file has an allowed extension."""
     return "." in filename and filename.rsplit(".", 1)[1].lower() in ALLOWED_EXTENSIONS
+
+
+def find_available_port(start_port: int, host: str = "0.0.0.0") -> int:
+    """Find the first available port starting from start_port."""
+    for port in range(start_port, 65536):
+        with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as sock:
+            try:
+                sock.bind((host, port))
+            except OSError:
+                continue
+            return port
+    raise RuntimeError(f"No available ports found starting from {start_port}")
+
+
+def get_server_port(start_port: int, host: str = "0.0.0.0") -> int:
+    """Resolve the server port once and reuse across the Flask reloader."""
+    env_port = os.environ.get(PORT_ENV_VAR)
+    if env_port:
+        try:
+            return int(env_port)
+        except ValueError:
+            pass
+    port = find_available_port(start_port, host=host)
+    os.environ[PORT_ENV_VAR] = str(port)
+    return port
+
+
+def is_reloader_process() -> bool:
+    """Return True when running inside the Werkzeug reloader child."""
+    return os.environ.get("WERKZEUG_RUN_MAIN") == "true"
 
 
 @app.route("/")
@@ -139,15 +172,28 @@ def serve_audio(filename: str):
 
 
 if __name__ == "__main__":
-    print("\n" + "="*60)
-    print("  SAM-Audio Isolation Utility")
-    print("="*60)
-    print(f"\nModel: {processor.MODEL_ID}")
-    print("\nStarting server...")
-    print("Open http://localhost:5001 in your browser\n")
+    debug_mode = True
+    use_reloader = debug_mode
+    port = get_server_port(DEFAULT_PORT)
+    show_banner = not use_reloader or is_reloader_process()
+
+    if show_banner:
+        if port != DEFAULT_PORT:
+            print(f"Port {DEFAULT_PORT} is in use; using {port} instead.")
+        print("\n" + "="*60)
+        print("  SAM-Audio Isolation Utility")
+        print("="*60)
+        print(f"\nModel: {processor.MODEL_ID}")
+        print("\nStarting server...")
+        print(f"Open http://localhost:{port} in your browser\n")
+        
+        # Pre-load model in development
+        print("Loading model (this may take a moment on first run)...")
+        processor.load_model()
     
-    # Pre-load model in development
-    print("Loading model (this may take a moment on first run)...")
-    processor.load_model()
-    
-    app.run(debug=True, host="0.0.0.0", port=5001)
+    app.run(
+        debug=debug_mode,
+        host="0.0.0.0",
+        port=port,
+        use_reloader=use_reloader,
+    )

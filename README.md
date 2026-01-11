@@ -44,7 +44,7 @@ cd Mac-GUI-for-SAM-Audio
 ./run.sh
 ```
 
-Then open **http://localhost:5001** in your browser.
+Then open the URL printed in the terminal (starts at **http://localhost:5001** and auto-adjusts if that port is busy).
 
 > **Note**: On first run, the model (~4.8GB) will be downloaded automatically. This is a one-time process.
 
@@ -96,7 +96,11 @@ Mac-GUI-for-SAM-Audio/
 The automatic Python download failed or was blocked. Re-run `./run.sh` with a working internet connection, or delete `.python/` and try again.
 
 ### Port 5001 in use
-Edit `app.py` and change the port number on the last line.
+The app automatically selects the next available port and prints it at startup. To force a specific port, run:
+
+```bash
+SAM_AUDIO_PORT=5005 ./run.sh
+```
 
 ### Model download fails
 Ensure you have a stable internet connection. The model (~4.8GB) is downloaded from Hugging Face.
