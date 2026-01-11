@@ -20,13 +20,22 @@ A local audio isolation utility powered by Meta's SAM-Audio model, optimized for
 - **Hardware**: Apple Silicon Mac (M Series)
 - **RAM**: 16GB minimum (64GB recommended for best performance)
 - **macOS**: 14.0 or later
-- **Python**: 3.10 or later
+- **Python**: 3.10 or later (auto-downloaded if missing)
 
-## Installing Python 3.10+
+## Python Setup (Automatic)
 
-This application requires **Python 3.10 or later**. macOS comes with an older Python version that won't work. Choose one of these methods to install a compatible Python:
+This application requires **Python 3.10 or later**. If your Mac only has the system Python, `run.sh` will automatically download a private Python runtime into `.python/` and use it (no system changes).
 
-### Option 1: Homebrew (Recommended)
+**Auto-download requirements:**
+- `curl` available (built into macOS)
+- Internet access
+- ~150MB free disk space
+
+To force a re-download, delete the `.python/` directory and run `./run.sh` again.
+
+### Manual Install (Optional)
+
+#### Option 1: Homebrew (Recommended)
 
 ```bash
 # Install Homebrew if you don't have it
@@ -36,7 +45,7 @@ This application requires **Python 3.10 or later**. macOS comes with an older Py
 brew install python@3.12
 ```
 
-### Option 2: pyenv (Version Manager)
+#### Option 2: pyenv (Version Manager)
 
 ```bash
 brew install pyenv
@@ -45,7 +54,7 @@ cd Mac-GUI-for-SAM-Audio
 pyenv local 3.12  # Uses the .python-version file
 ```
 
-### Option 3: mise (Modern Version Manager)
+#### Option 3: mise (Modern Version Manager)
 
 ```bash
 brew install mise
@@ -115,7 +124,7 @@ Mac-GUI-for-SAM-Audio/
 ## Troubleshooting
 
 ### "Python 3.10+ is required" error
-Your system's default Python is too old. Install Python 3.10+ using one of the methods in the [Installing Python 3.10+](#installing-python-310) section above.
+The automatic Python download failed or was blocked. Install Python 3.10+ using one of the methods in [Python Setup (Automatic)](#python-setup-automatic) and run `./run.sh` again.
 
 ### Port 5001 in use
 Edit `app.py` and change the port number on the last line.
