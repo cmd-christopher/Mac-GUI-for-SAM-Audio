@@ -22,7 +22,7 @@ A local audio isolation utility powered by Meta's SAM-Audio model, optimized for
 - **macOS**: 14.0 or later
 - **Python**: 3.10 or later (auto-downloaded if missing)
 
-## Python Setup (Automatic)
+## Python Setup
 
 This application requires **Python 3.10 or later**. If your Mac only has the system Python, `run.sh` will automatically download a private Python runtime into `.python/` and use it (no system changes).
 
@@ -32,37 +32,6 @@ This application requires **Python 3.10 or later**. If your Mac only has the sys
 - ~150MB free disk space
 
 To force a re-download, delete the `.python/` directory and run `./run.sh` again.
-
-### Manual Install (Optional)
-
-#### Option 1: Homebrew (Recommended)
-
-```bash
-# Install Homebrew if you don't have it
-/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
-
-# Install Python 3.12
-brew install python@3.12
-```
-
-#### Option 2: pyenv (Version Manager)
-
-```bash
-brew install pyenv
-pyenv install 3.12
-cd Mac-GUI-for-SAM-Audio
-pyenv local 3.12  # Uses the .python-version file
-```
-
-#### Option 3: mise (Modern Version Manager)
-
-```bash
-brew install mise
-mise install python@3.12
-mise use python@3.12
-```
-
-> **Note**: The `run.sh` script will automatically detect Python 3.10+ from Homebrew, pyenv, or mise. You don't need to manually activate anything—just install it and run the script.
 
 ## Quick Start
 
@@ -124,7 +93,7 @@ Mac-GUI-for-SAM-Audio/
 ## Troubleshooting
 
 ### "Python 3.10+ is required" error
-The automatic Python download failed or was blocked. Install Python 3.10+ using one of the methods in [Python Setup (Automatic)](#python-setup-automatic) and run `./run.sh` again.
+The automatic Python download failed or was blocked. Re-run `./run.sh` with a working internet connection, or delete `.python/` and try again.
 
 ### Port 5001 in use
 Edit `app.py` and change the port number on the last line.
@@ -136,7 +105,7 @@ Ensure you have a stable internet connection. The model (~4.8GB) is downloaded f
 Enable "Long audio mode" checkbox for files over 30 seconds - this uses chunked processing.
 
 ### "resolution-too-deep" pip error
-This usually means you're using Python 3.9 or older. Install Python 3.10+ as described above.
+This usually means the bundled environment didn't finish installing dependencies. Delete `.python/` and `venv/`, then run `./run.sh` again.
 
 ## Credits
 
