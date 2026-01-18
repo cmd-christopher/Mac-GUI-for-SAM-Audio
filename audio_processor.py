@@ -11,6 +11,8 @@ from typing import Optional, Tuple
 from mlx_audio.sts import SAMAudio, SAMAudioProcessor, save_audio
 import mlx.core as mx
 
+NORMALIZE_PEAK = 0.99
+
 
 class AudioProcessor:
     """
@@ -71,6 +73,13 @@ class AudioProcessor:
         if self.model:
             return self.model.sample_rate
         return 24000  # Default SAM-Audio sample rate
+
+    def _normalize_audio(self, audio: mx.array, peak: float = NORMALIZE_PEAK) -> mx.array:
+        """Peak-normalize audio to avoid clipping and maximize level."""
+        max_abs = float(mx.max(mx.abs(audio)).item())
+        if max_abs <= 0:
+            return audio
+        return audio * (peak / max_abs)
     
     def isolate_audio(
         self,
@@ -139,9 +148,12 @@ class AudioProcessor:
             # Save outputs
             target_path = self.output_dir / f"{base_name}_target.wav"
             residual_path = self.output_dir / f"{base_name}_residual.wav"
+
+            target_audio = self._normalize_audio(result.target[0])
+            residual_audio = self._normalize_audio(result.residual[0])
             
-            save_audio(result.target[0], str(target_path), sample_rate=self.sample_rate)
-            save_audio(result.residual[0], str(residual_path), sample_rate=self.sample_rate)
+            save_audio(target_audio, str(target_path), sample_rate=self.sample_rate)
+            save_audio(residual_audio, str(residual_path), sample_rate=self.sample_rate)
             
             metadata = {
                 "peak_memory_gb": getattr(result, 'peak_memory', 0),
